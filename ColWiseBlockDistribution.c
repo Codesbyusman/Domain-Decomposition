@@ -8,15 +8,15 @@
 #include <stdbool.h>
 
 // the required buffers which will be send to the desired threads
-int bufferOne[256][1024] = {0};
-int bufferTwo[256][1024] = {0};
-int bufferThree[256][1024] = {0};
-int bufferFour[256][1024] = {0};
+int bufferOne[1024][256] = {0};
+int bufferTwo[1024][256] = {0};
+int bufferThree[1024][256] = {0};
+int bufferFour[1024][256] = {0};
 
 // a function that would be called by the thread
 // as row wise then will sum row wise
 void *performOperation(void *onBuffer);
-void distributeMe(int mainArray[1024][1024], int b1[256][1024], int b2[256][1024], int b3[256][1024], int b4[256][1024]);
+void distributeMe(int mainArray[1024][1024], int b1[1024][256], int b2[1024][256], int b3[1024][256], int b4[1024][256]);
 bool CorrectOutPutCheck(int mainArray[1024][1024], int distributedSum);
 
 int main()
@@ -82,43 +82,47 @@ int main()
 }
 
 // for doing the distribution of array accordingly into the buffer
-void distributeMe(int mainArray[1024][1024], int b1[256][1024], int b2[256][1024], int b3[256][1024], int b4[256][1024])
+void distributeMe(int mainArray[1024][1024], int b1[1024][256], int b2[1024][256], int b3[1024][256], int b4[1024][256])
 {
-	int i = 0;
+	int j = 0;
 
 	// for 1st buffer
-	for (; i < 256; i++)
+	for (j = 0; j < 256; j++)
 	{
-		for (int j = 0; j < 1024; j++)
+		for (int i = 0; i < 1024; i++)
 		{
+
 			b1[i][j] = mainArray[i][j];
 		}
 	}
 
 	// for 2nd buffer
-	for (; i < 256 * 2; i++)
+	for (; j < 256 * 2; j++)
 	{
-		for (int j = 0; j < 1024; j++)
+		for (int i = 0; i < 1024; i++)
 		{
-			b2[i - 256][j] = mainArray[i][j];
+
+			b2[i][j - 256] = mainArray[i][j];
 		}
 	}
 
 	// for 3rd buffer
-	for (; i < 256 * 3; i++)
+	for (; j < 256 * 3; j++)
 	{
-		for (int j = 0; j < 1024; j++)
+		for (int i = 0; i < 1024; i++)
 		{
-			b3[i - 256 * 2][j] = mainArray[i][j];
+
+			b3[i][j - 256 * 2] = mainArray[i][j];
 		}
 	}
 
 	// for 4th buffer
-	for (; i < 256 * 4; i++)
+	for (; j < 256 * 4; j++)
 	{
-		for (int j = 0; j < 1024; j++)
+		for (int i = 0; i < 1024; i++)
 		{
-			b4[i - 256 * 3][j] = mainArray[i][j];
+
+			b4[i][j - 256 * 3] = mainArray[i][j];
 		}
 	}
 }
@@ -128,28 +132,29 @@ void distributeMe(int mainArray[1024][1024], int b1[256][1024], int b2[256][1024
 void *performOperation(void *onBuffer)
 {
 	// type casting the argument
-	int(*b)[1024] = (int(*)[1024])onBuffer;
+	int(*b)[256] = (int(*)[256])onBuffer;
 
 	// the returnng variable
 	int *sum = malloc(sizeof(int));
 	*sum = 0;
 
 	// the array of rows sum
-	int rowSum[256] = {0};
+	int colSum[256] = {0};
 
 	// iterating to get rows sum then will sum the row
-	for (int i = 0; i < 256; i++)
+
+	for (int j = 0; j < 256; j++)
 	{
-		for (int j = 0; j < 1024; j++)
+		for (int i = 0; i < 1024; i++)
 		{
-			rowSum[i] += b[i][j];
+			colSum[j] += b[i][j];
 		}
 	}
 
 	// calculating the whole sum again by adding whole row
 	for (int i = 0; i < 256; i++)
 	{
-		*sum += rowSum[i];
+		*sum += colSum[i];
 	}
 
 	// returning the sum of buffer
