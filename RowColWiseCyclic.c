@@ -129,24 +129,15 @@ void *performOperation(void *onBuffer)
     int *sum = malloc(sizeof(int));
     *sum = 0;
 
-    // the array of rows sumin block
-    int rowSum[512] = {0};
-
     // iterating to get rows sum then will sum the row
     for (int i = 0; i < 512; i++)
     {
         for (int j = 0; j < 512; j++)
         {
-            rowSum[i] += b[i][j];
+           *sum += b[i][j];
         }
     }
-
-    // calculating the whole sum again by adding whole rows of block
-    for (int i = 0; i < 512; i++)
-    {
-        *sum += rowSum[i];
-    }
-
+    
     // returning the sum of buffer
     return (void *)sum;
 }
