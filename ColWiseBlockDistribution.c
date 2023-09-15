@@ -1,4 +1,4 @@
-// Row Wise Block Distributions
+// Column Wise Block Distributions
 
 // libraries
 #include <stdio.h>
@@ -14,7 +14,7 @@ int bufferThree[1024][256] = {0};
 int bufferFour[1024][256] = {0};
 
 // a function that would be called by the thread
-// as row wise then will sum row wise
+// as col wise then will sum col wise
 void *performOperation(void *onBuffer);
 void distributeMe(int mainArray[1024][1024], int b1[1024][256], int b2[1024][256], int b3[1024][256], int b4[1024][256]);
 bool CorrectOutPutCheck(int mainArray[1024][1024], int distributedSum);
@@ -128,7 +128,7 @@ void distributeMe(int mainArray[1024][1024], int b1[1024][256], int b2[1024][256
 }
 
 // a function that would be called by the thread
-// as row wise then will sum row wise
+// as col wise then will sum col wise
 void *performOperation(void *onBuffer)
 {
 	// type casting the argument
@@ -138,10 +138,10 @@ void *performOperation(void *onBuffer)
 	int *sum = malloc(sizeof(int));
 	*sum = 0;
 
-	// the array of rows sum
+	// the array of cols sum
 	int colSum[256] = {0};
 
-	// iterating to get rows sum then will sum the row
+	// iterating to get cols sum then will sum the col
 
 	for (int j = 0; j < 256; j++)
 	{
@@ -151,7 +151,7 @@ void *performOperation(void *onBuffer)
 		}
 	}
 
-	// calculating the whole sum again by adding whole row
+	// calculating the whole sum again by adding whole col
 	for (int i = 0; i < 256; i++)
 	{
 		*sum += colSum[i];
